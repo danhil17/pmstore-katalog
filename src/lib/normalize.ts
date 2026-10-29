@@ -42,6 +42,7 @@ const IMAGE_KEYS = [
   "link gambar",
   "foto produk",
   "image url",
+  "foto url",
 ];
 
 const CHAT_KEYS = [
@@ -53,15 +54,16 @@ const CHAT_KEYS = [
   "link_wa",
   "link wa",
   "chat admin",
+  "chat url",
   "url",
   "hubungi",
   "kontak",
 ];
 
 const CATEGORY_KEYS = ["kategori", "category", "jenis", "tipe", "tipe iphone", "brand"];
-const CONDITION_KEYS = ["kondisi", "condition", "grade", "status"];
+const CONDITION_KEYS = ["grade kondisi", "kondisi", "condition", "grade"];
 const CAPACITY_KEYS = ["kapasitas", "storage", "memori", "memory", "gb", "internal", "varian"];
-const STOCK_KEYS = ["stok", "stock", "qty", "jumlah", "sisa", "jumlah stok"];
+const STOCK_KEYS = ["status stok", "stok", "stock", "qty", "jumlah", "sisa", "jumlah stok"];
 const DESCRIPTION_KEYS = [
   "deskripsi",
   "description",
@@ -81,14 +83,14 @@ const SKIP_NAME =
   /^(tipe iphone|sku\s*\/?\s*kode barang|no\.?|nama produk|total( sku| unit order)?|database|sumber:|ketentuan)/i;
 
 function normalizeKey(key: string): string {
-  return key.toLowerCase().replace(/\s+/g, " ").trim();
+  return key.toLowerCase().replace(/[_\s]+/g, " ").trim();
 }
 
 function firstValue(row: SheetRow, aliases: string[]): unknown {
   const entries = Object.entries(row);
   for (const alias of aliases) {
     for (const [key, value] of entries) {
-      if (normalizeKey(key) === alias && isPresent(value)) return value;
+      if (normalizeKey(key) === normalizeKey(alias) && isPresent(value)) return value;
     }
   }
   return null;
@@ -110,17 +112,6 @@ function slugify(value: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "")
     .slice(0, 48);
-}
-
-function fallbackName(row: SheetRow): string | null {
-  const values = Object.values(row)
-    .map((value) => asText(value))
-    .filter((value): value is string => Boolean(value));
-
-  if (values.length === 1) return values[0];
-
-  const plausible = values.find((value) => !SKIP_NAME.test(value) && !/^\d+$/.test(value));
-  return plausible ?? null;
 }
 
 function parseStock(value: unknown): { label: string | null; status: StockStatus } {
@@ -150,10 +141,11 @@ function publicSpecs(row: SheetRow, usedKeys: Set<string>): ProductSpec[] {
     const normalized = normalizeKey(key);
     if (usedKeys.has(normalized)) continue;
     if (INTERNAL_KEY.test(normalized)) continue;
+    if (![...CATEGORY_KEYS, ...CONDITION_KEYS, ...CAPACITY_KEYS, ...STOCK_KEYS, ...DESCRIPTION_KEYS, "garansi", "battery health"].map(normalizeKey).includes(normalized)) continue;
     if (/^pm store/.test(normalized)) continue;
     const text = asText(value);
     if (!text) continue;
-    specs.push({ label: key.trim(), value: text });
+    specs.push({ label: key.trim().replace(/_/g, " "), value: text });
   }
   return specs.slice(0, 12);
 }
@@ -167,11 +159,11 @@ export function shouldSkipRow(name: string | null): boolean {
 }
 
 export function normalizeProduct(row: SheetRow, index: number, prefix: string): Product | null {
-  const named = asText(firstValue(row, NAME_KEYS)) ?? fallbackName(row);
+  const named = asText(firstValue(row, NAME_KEYS));
   if (shouldSkipRow(named) || !named) return null;
 
   const rawId = asText(firstValue(row, ID_KEYS));
-  const id = `${prefix}-${rawId ? slugify(rawId) : slugify(named) || "item"}-${index + 1}`;
+  const id = rawId ? `${prefix}-${encodeURIComponent(rawId)}` : `${prefix}-${slugify(named) || "item"}-${index + 1}`;
 
   const priceValue = parsePrice(firstValue(row, PRICE_KEYS));
   const imageUrl = sanitizeExternalUrl(firstValue(row, IMAGE_KEYS));
@@ -187,7 +179,7 @@ export function normalizeProduct(row: SheetRow, index: number, prefix: string): 
   );
 
   const specs = publicSpecs(row, usedKeys);
-  const inferredCategory = category && category.toLowerCase() !== named.toLowerCase() ? category : named;
+  const inferredCategory = category || "Lainnya";
 
   const searchText = [named, inferredCategory, condition, capacity, description, stock.label, ...specs.map((spec) => spec.value)]
     .filter(Boolean)

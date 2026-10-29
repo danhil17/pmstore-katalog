@@ -1,25 +1,28 @@
 import { normalizeRows } from "@/lib/normalize";
 import type { CatalogResponse, Product } from "@/lib/types";
 
-export const SHEETDB_BASE = "https://sheetdb.io/api/v1/rtp47whpbtdio";
+const SHEETDB_BASE = process.env.SHEETDB_URL || "https://sheetdb.io/api/v1/jo2cdtmssq1bk";
 
 /** Tab katalog publik. Sheet default API adalah data internal owner, bukan katalog. */
 export const CATALOG_SHEETS = [
-  { name: "PRICE LIST OCT26", prefix: "pl" },
-  { name: "MASTER ACCESSORIES", prefix: "acc" },
+  { name: "KATALOG_WEBSITE", prefix: "catalog" },
 ] as const;
 
 const FETCH_TIMEOUT_MS = 12000;
 
 async function fetchSheet(sheet: string): Promise<unknown> {
-  const url = `${SHEETDB_BASE}?sheet=${encodeURIComponent(sheet)}`;
+  const url = new URL(SHEETDB_BASE);
+  url.searchParams.set("sheet", sheet);
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
   try {
     const response = await fetch(url, {
       signal: controller.signal,
-      headers: { Accept: "application/json" },
+      headers: {
+        Accept: "application/json",
+        ...(process.env.SHEETDB_TOKEN ? { Authorization: `Bearer ${process.env.SHEETDB_TOKEN}` } : {}),
+      },
       next: { revalidate: 60 },
     });
 
@@ -27,7 +30,9 @@ async function fetchSheet(sheet: string): Promise<unknown> {
       throw new Error("Catalog request failed");
     }
 
-    return response.json();
+    const payload: unknown = await response.json();
+    if (!Array.isArray(payload)) throw new Error("Invalid catalog response");
+    return payload;
   } finally {
     clearTimeout(timer);
   }
@@ -47,9 +52,6 @@ export async function getCatalog(): Promise<CatalogResponse> {
     const chunks = await Promise.all(
       CATALOG_SHEETS.map(async (sheet) => {
         const payload = await fetchSheet(sheet.name);
-        if (payload && typeof payload === "object" && "error" in payload) {
-          return [] as Product[];
-        }
         return normalizeRows(payload, sheet.prefix);
       }),
     );
