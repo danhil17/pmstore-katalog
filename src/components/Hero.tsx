@@ -1,54 +1,46 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, ShieldCheck, Smartphone } from "lucide-react";
 
-/** Original decorative device illustration; not a photograph of a listed unit. */
-function DeviceDisplay() {
-  return (
-    <svg viewBox="0 0 900 370" className="mx-auto h-auto w-full max-w-[850px]" role="img" aria-label="Ilustrasi perangkat gadget, bukan foto unit yang dijual">
-      <defs>
-        <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#bdd3ee" /><stop offset="1" stopColor="#426795" /></linearGradient>
-        <linearGradient id="metal" x1="0" x2="1"><stop stopColor="#a0aab5" /><stop offset=".5" stopColor="#e2e8ed" /><stop offset="1" stopColor="#8f9ba7" /></linearGradient>
-        <linearGradient id="phone" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#8cabc4" /><stop offset="1" stopColor="#bfd0de" /></linearGradient>
-      </defs>
-      <ellipse cx="455" cy="338" rx="350" ry="14" fill="#1a283c" opacity=".07" />
-      <g transform="translate(80 67) rotate(-6 180 120)">
-        <rect width="368" height="245" rx="15" fill="url(#metal)" />
-        <rect x="6" y="6" width="356" height="229" rx="11" fill="#18202b" />
-        <rect x="14" y="14" width="340" height="213" rx="5" fill="url(#screen)" />
-        <path d="M14 192 Q90 60 190 142 T354 80 V227 H14Z" fill="#e7edf7" opacity=".55" />
-        <path d="M14 218 Q130 120 234 184 T354 150 V227 H14Z" fill="#314968" opacity=".5" />
-        <path d="M-25 245 H393 L414 258 Q417 266 401 266 H-34 Q-47 264-43 258Z" fill="url(#metal)" />
-        <path d="M144 245 H224 L217 252 H151Z" fill="#8895a2" />
-      </g>
-      <g transform="translate(596 67) rotate(9 110 130)">
-        <rect width="190" height="259" rx="19" fill="#aeb8c5" />
-        <rect x="4" y="4" width="182" height="251" rx="16" fill="#1a2430" />
-        <rect x="13" y="14" width="164" height="229" rx="7" fill="#d6c8ba" />
-        <path d="M13 155 Q85 22 177 125 V243 H13Z" fill="#a28c7c" />
-        <path d="M13 216 Q122 126 177 192 V243 H13Z" fill="#f0e5da" />
-      </g>
-      <g transform="translate(384 15) rotate(-7 84 157)">
-        <rect width="166" height="314" rx="29" fill="#69859d" />
-        <rect x="4" y="3" width="158" height="308" rx="26" fill="url(#phone)" stroke="#deebf5" />
-        <rect x="15" y="16" width="80" height="91" rx="21" fill="#91aabe" stroke="#7893a8" />
-        {[ [37,40], [72,63], [37,85] ].map(([cx,cy]) => <g key={cy}><circle cx={cx} cy={cy} r="16" fill="#687f94" /><circle cx={cx} cy={cy} r="12" fill="#1a2533" /><circle cx={cx-3} cy={cy-3} r="4" fill="#43576e" /></g>)}
-        <circle cx="72" cy="32" r="6" fill="#ede8db" />
-        <circle cx="72" cy="90" r="5" fill="#627789" />
-        <path d="M69 176 H95 M82 163 V189" stroke="#dbe6ed" strokeWidth="2" opacity=".55" />
-      </g>
-    </svg>
-  );
-}
+// Product photograph from a retail listing, used as a design placeholder.
+// Replace with a PM STORE-owned or licensed hero photo before final publication.
+const HERO_PHOTO = "https://re.now/cdn/shop/files/OPM-3146_Apple_iPhone17ProMax_blue_image1_df5a3eed-3930-4238-a97d-6751f4318212.png?v=1768291851&width=1000";
 
 export function Hero() {
   return (
-    <section className="overflow-hidden bg-[#f1f3f5] px-4 pt-10 text-center sm:pt-14">
-      <div className="mx-auto max-w-6xl">
-        <p className="text-[11px] font-semibold uppercase tracking-[.22em] text-muted">Pilihan gadget · PM STORE Lumajang</p>
-        <h1 className="mx-auto mt-4 max-w-3xl text-[38px] font-semibold leading-[1.1] tracking-[-.055em] text-ink sm:text-6xl lg:text-[72px]">Gadget pilihan.<br /><span className="text-[#697584]">Untuk keseharianmu.</span></h1>
-        <p className="mx-auto mt-5 max-w-md text-sm leading-6 text-muted sm:text-base">Temukan gadget yang pas untuk kebutuhanmu.<br className="hidden sm:block" /> Cek detailnya, lalu konsultasikan dengan admin.</p>
-        <Link href="#katalog" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-accent px-6 text-sm font-medium text-white transition hover:bg-accent-hover">Jelajahi katalog <ArrowUpRight size={16} /></Link>
-        <div className="mx-auto mt-7 w-[115%] max-w-none -translate-x-[6.5%] sm:mt-9 sm:w-full sm:translate-x-0"><DeviceDisplay /></div>
+    <section className="relative overflow-hidden bg-gradient-to-br from-[#f9fafc] via-[#eef3f9] to-[#dce7f5]">
+      <div className="mx-auto grid max-w-7xl items-center gap-6 px-5 py-14 sm:px-8 sm:py-16 lg:min-h-[570px] lg:grid-cols-[1fr_0.95fr] lg:gap-12 lg:py-20">
+        <div className="relative z-10 text-center lg:text-left">
+          <p className="text-[11px] font-semibold uppercase tracking-[.25em] text-[#3d648e]">PM STORE LUMAJANG · GADGET PILIHAN</p>
+          <h1 className="mt-5 text-[42px] font-semibold leading-[1.07] tracking-[-.055em] text-[#172334] sm:text-6xl lg:text-[72px]">
+            Lebih premium.<br/><span className="text-[#5d7898]">Lebih personal.</span>
+          </h1>
+          <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-[#536276] sm:text-base lg:mx-0">
+            Jelajahi pilihan iPhone dan gadget original di PM Store. Temukan produk yang kamu sukai, lalu konsultasikan ketersediaannya langsung dengan admin kami.
+          </p>
+          <div className="mt-7 flex flex-wrap justify-center gap-3 lg:justify-start">
+            <Link href="#katalog" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#0765d8] px-7 text-sm font-semibold text-white transition hover:bg-[#004dab]">
+              Jelajahi Katalog <ArrowUpRight size={16}/>
+            </Link>
+            <a href="https://wa.me/6281234560429?text=Halo%20Admin%20PM%20Store%2C%20saya%20ingin%20bertanya%20tentang%20ketersediaan%20produk." target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#a8bad0] bg-white/80 px-7 text-sm font-semibold text-[#1d3b60] transition hover:bg-white">
+              Tanya Ketersediaan
+            </a>
+          </div>
+          <div className="mt-8 flex flex-wrap justify-center gap-4 text-xs text-[#536276] lg:justify-start sm:gap-6">
+            <span className="inline-flex items-center gap-1.5"><ShieldCheck size={16}/> Produk original</span>
+            <span className="inline-flex items-center gap-1.5"><CheckCircle2 size={16}/> Pilihan bergaransi</span>
+            <span className="inline-flex items-center gap-1.5"><Smartphone size={16}/> Konsultasi admin</span>
+          </div>
+        </div>
+        <div className="relative mx-auto flex w-full max-w-[520px] items-center justify-center">
+          <div className="absolute inset-[12%_3%] rounded-full bg-[#ccdbed]/80 blur-3xl" aria-hidden="true"/>
+          <div className="relative w-full overflow-hidden rounded-[32px] border border-white/80 bg-white/75 p-6 shadow-[0_25px_90px_-40px_rgba(28,62,105,.35)] sm:p-10">
+            <div className="absolute left-6 top-6 rounded-full bg-[#e7f0fb] px-3 py-1 text-[11px] font-semibold text-[#315b87]">Pilihan Premium</div>
+            {/* A genuine product listing photo, not an illustrative phone drawing. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={HERO_PHOTO} alt="Foto produk iPhone 17 Pro Max warna Deep Blue sebagai contoh tampilan premium" className="mx-auto mt-5 aspect-square w-full max-w-[440px] object-contain" loading="eager"/>
+            <p className="mt-1 text-center text-xs text-[#71839b]">Visual contoh produk · Ketersediaan mengikuti katalog PM Store</p>
+          </div>
+        </div>
       </div>
     </section>
   );
