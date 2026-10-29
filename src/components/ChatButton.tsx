@@ -24,7 +24,7 @@ export function ChatButton({ href, className = "" }: ChatButtonProps) {
       className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-accent px-3 text-sm font-semibold text-white transition-colors hover:bg-accent-hover ${className}`}
     >
       <ChatIcon className="h-4 w-4" />
-      Chat Admin
+      Tanya Ketersediaan
     </a>
   );
 }
