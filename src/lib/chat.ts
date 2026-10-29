@@ -1,3 +1,5 @@
+const STORE_WHATSAPP = "6281234560429";
+
 const ALLOWED_PROTOCOLS = new Set(["http:", "https:"]);
 
 const WHATSAPP_HOSTS = new Set([
@@ -42,7 +44,10 @@ function hasMessageParam(url: URL): boolean {
 
 export function buildAdminChatUrl(rawUrl: string | null, productName: string): string | null {
   const sanitized = sanitizeExternalUrl(rawUrl);
-  if (!sanitized) return null;
+  if (!sanitized) {
+    const message = `Halo Admin PM Store, saya ingin menanyakan ketersediaan ${productName}. Apakah stoknya masih tersedia?`;
+    return `https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(message)}`;
+  }
 
   const url = new URL(sanitized);
   if (!isWhatsAppUrl(url) || hasMessageParam(url)) {
