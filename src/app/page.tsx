@@ -3,6 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { Search, ShieldCheck, Battery, PhoneCall, Sparkles } from 'lucide-react';
 
+interface ProductRaw {
+  [key: string]: any;
+}
+
 interface Product {
   Nama_Produk: string;
   Harga: string;
@@ -20,23 +24,53 @@ export default function CatalogPage() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
 
-  // 628123450429
-  const NO_WHATSAPP = '6281234560429'; 
+  const NO_WHATSAPP = '628123450429';
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
+  // Pembaca nama kolom fleksibel (Otomatis cocokkan spasi/huruf besar-kecil)
+  const getValue = (item: ProductRaw, ...possibleKeys: string[]): string => {
+    for (const key of possibleKeys) {
+      if (item[key] !== undefined && item[key] !== null && item[key] !== '') {
+        return String(item[key]);
+      }
+    }
+    const itemKeys = Object.keys(item);
+    for (const key of possibleKeys) {
+      const target = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const matchedKey = itemKeys.find(
+        (k) => k.toLowerCase().replace(/[^a-z0-9]/g, '') === target
+      );
+      if (matchedKey && item[matchedKey] !== undefined && item[matchedKey] !== null) {
+        return String(item[matchedKey]);
+      }
+    }
+    return '';
+  };
+
   const fetchProducts = async () => {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_SHEETDB_URL;
       if (!apiUrl) return;
-      
-      // Mengambil data dari tab KATALOG_WEBSITE
+
       const res = await fetch(`${apiUrl}?sheet=KATALOG_WEBSITE`);
       const data = await res.json();
+
       if (Array.isArray(data)) {
-        setProducts(data);
+        const normalizedProducts: Product[] = data.map((item: ProductRaw) => ({
+          Nama_Produk: getValue(item, 'Nama_Produk', 'Nama Produk', 'Nama', 'Produk'),
+          Harga: getValue(item, 'Harga', 'Harga Unit', 'Price'),
+          Kategori: getValue(item, 'Kategori', 'Category'),
+          Garansi: getValue(item, 'Garansi', 'Garansi Unit'),
+          Grade_Kondisi: getValue(item, 'Grade_Kondisi', 'Grade Kondisi', 'Kondisi', 'Grade'),
+          Battery_Health: getValue(item, 'Battery_Health', 'Battery Health', 'BH', 'Health'),
+          Foto_URL: getValue(item, 'Foto_URL', 'Foto URL', 'Foto', 'Gambar', 'Image', 'URL Foto'),
+          Status_Stok: getValue(item, 'Status_Stok', 'Status Stok', 'Status', 'Stok'),
+        }));
+
+        setProducts(normalizedProducts);
       }
     } catch (error) {
       console.error('Gagal mengambil data katalog:', error);
@@ -49,24 +83,31 @@ export default function CatalogPage() {
 
   const filteredProducts = products.filter((item) => {
     const matchSearch = item.Nama_Produk?.toLowerCase().includes(search.toLowerCase());
-    const matchCategory = selectedCategory === 'Semua' || item.Kategori === selectedCategory;
+    const matchCategory =
+      selectedCategory === 'Semua' ||
+      item.Kategori?.toLowerCase() === selectedCategory.toLowerCase();
     return matchSearch && matchCategory;
   });
 
   const formatRupiah = (harga: string) => {
     const numeric = parseInt(harga?.replace(/[^0-9]/g, '') || '0', 10);
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(numeric);
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      maximumFractionDigits: 0,
+    }).format(numeric);
   };
 
   const handleWAOrder = (product: Product) => {
-    const pesan = `Halo PM Store, saya mau order unit ini:\n\n` +
-      `📌 *${product.Nama_Produk}*\n` +
+    const pesan =
+      `Halo PM Store, saya mau order unit ini:\n\n` +
+      `📌 *${product.Nama_Produk || 'Produk PM Store'}*\n` +
       `💰 *Harga:* ${formatRupiah(product.Harga)}\n` +
       `🛡️ *Garansi:* ${product.Garansi || '-'}\n` +
       `🔋 *BH:* ${product.Battery_Health || '-'}\n` +
       `✨ *Kondisi:* ${product.Grade_Kondisi || '-'}\n\n` +
       `Apakah unit ini masih ready?`;
-    
+
     window.open(`https://wa.me/${NO_WHATSAPP}?text=${encodeURIComponent(pesan)}`, '_blank');
   };
 
@@ -101,9 +142,15 @@ export default function CatalogPage() {
       {/* Hero Banner */}
       <section className="bg-black text-white py-12 px-4 text-center relative overflow-hidden">
         <div className="max-w-3xl mx-auto space-y-3 relative z-10">
-          <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase">Katalog Stok Real-Time</p>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight">Temukan Gadget Impianmu.</h1>
-          <p className="text-gray-400 text-sm sm:text-base">Unit Original, Bergaransi Resmi, dan Kualitas Terjamin 100%.</p>
+          <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase">
+            Katalog Stok Real-Time
+          </p>
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
+            Temukan Gadget Impianmu.
+          </h1>
+          <p className="text-gray-400 text-sm sm:text-base">
+            Unit Original, Bergaransi Resmi, dan Kualitas Terjamin 100%.
+          </p>
         </div>
       </section>
 
@@ -130,7 +177,10 @@ export default function CatalogPage() {
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl p-4 h-80 animate-pulse border border-black/5" />
+              <div
+                key={i}
+                className="bg-white rounded-2xl p-4 h-80 animate-pulse border border-black/5"
+              />
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
@@ -150,7 +200,7 @@ export default function CatalogPage() {
                     {product.Foto_URL ? (
                       <img
                         src={product.Foto_URL}
-                        alt={product.Nama_Produk}
+                        alt={product.Nama_Produk || 'Foto Produk'}
                         className="h-full w-full object-contain group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
@@ -159,9 +209,13 @@ export default function CatalogPage() {
 
                     {/* Status Badge */}
                     {product.Status_Stok && (
-                      <span className={`absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        product.Status_Stok.toLowerCase() === 'ready' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
-                      }`}>
+                      <span
+                        className={`absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                          product.Status_Stok.toLowerCase() === 'ready'
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-rose-100 text-rose-700'
+                        }`}
+                      >
                         {product.Status_Stok}
                       </span>
                     )}
@@ -191,7 +245,7 @@ export default function CatalogPage() {
 
                   {/* Title & Price */}
                   <h3 className="font-semibold text-sm sm:text-base text-gray-900 line-clamp-2 leading-snug">
-                    {product.Nama_Produk}
+                    {product.Nama_Produk || 'Nama Produk Belum Diisi'}
                   </h3>
                   <p className="text-base sm:text-lg font-extrabold text-black mt-1">
                     {formatRupiah(product.Harga)}
