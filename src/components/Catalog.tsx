@@ -1,7 +1,7 @@
 "use client";
 
 import { Smartphone, Laptop, Tablet, Headphones, LayoutGrid } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CatalogSkeleton } from "@/components/CatalogSkeleton";
 import { CloseIcon, SearchIcon } from "@/components/icons";
 import { ProductCard } from "@/components/ProductCard";
@@ -32,6 +32,11 @@ export function Catalog({ initial, heading = "Katalog", compactHero = false }: C
     () => filterProducts(products, query, category, condition, sort),
     [products, query, category, condition, sort],
   );
+
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("category");
+    if (requested) setCategory(requested);
+  }, []);
 
   const hasActiveFilters = Boolean(query || category || condition || sort !== "default");
 
