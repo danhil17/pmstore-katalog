@@ -3,10 +3,10 @@ import { store } from "@/lib/store";
 
 export function Footer() {
   return (
-    <footer className="mt-16 border-t border-line bg-white">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
+    <footer className="mt-16 border-t border-line bg-[#F1F3F5]">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
-          <p className="text-sm font-semibold tracking-tight">{store.name}</p>
+          <p className="text-xl font-bold tracking-tight">{store.name}</p>
           <p className="mt-3 max-w-sm text-sm leading-6 text-muted">{store.description}</p>
         </div>
         <div>
@@ -44,7 +44,7 @@ export function Footer() {
               </li>
             ))}
             {!store.address && !store.hours && !store.phone && store.socials.length === 0 ? (
-              <li>Alamat, jam operasional, dan media sosial akan ditampilkan setelah dilengkapi.</li>
+              <li>Temukan produk pilihanmu di katalog. Detail dan ketersediaan dapat dikonfirmasi kepada admin.</li>
             ) : null}
           </ul>
         </div>

@@ -33,13 +33,13 @@ export function Header() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line/80 bg-white/90 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-40 border-b border-line bg-white/95 backdrop-blur-md">
+      <div className="mx-auto flex h-[76px] max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex min-h-11 items-center gap-2.5 rounded-lg">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-[13px] font-bold tracking-tight text-white">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink text-[13px] font-bold tracking-tight text-white">
             {store.shortName}
           </span>
-          <span className="text-[15px] font-semibold tracking-tight">{store.name}</span>
+          <span className="text-[18px] font-bold tracking-[-.04em]">{store.name}</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Utama">
@@ -49,7 +49,7 @@ export function Header() {
               href={item.href}
               className={`min-h-11 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
                 isActive(pathname, item.href)
-                  ? "bg-accent-soft text-accent"
+                  ? "text-ink underline decoration-accent decoration-2 underline-offset-8"
                   : "text-muted hover:bg-canvas hover:text-ink"
               }`}
             >
@@ -61,7 +61,7 @@ export function Header() {
               href={store.contactUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-2 inline-flex min-h-11 items-center rounded-lg bg-accent px-4 text-sm font-semibold text-white transition-colors hover:bg-accent-hover"
+              className="ml-2 inline-flex min-h-11 items-center rounded-xl bg-ink px-4 text-sm font-semibold text-white transition-colors hover:bg-accent-hover"
             >
               Hubungi Admin
             </a>
@@ -88,7 +88,7 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 className={`flex min-h-11 items-center rounded-lg px-3 text-sm font-medium ${
-                  isActive(pathname, item.href) ? "bg-accent-soft text-accent" : "text-ink"
+                  isActive(pathname, item.href) ? "text-ink underline decoration-accent decoration-2 underline-offset-8" : "text-ink"
                 }`}
               >
                 {item.label}

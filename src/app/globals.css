@@ -45,3 +45,5 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+#katalog { scroll-margin-top: 100px; }

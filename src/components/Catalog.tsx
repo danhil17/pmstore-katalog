@@ -1,5 +1,6 @@
 "use client";
 
+import { Smartphone, Laptop, Tablet, Headphones, LayoutGrid } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CatalogSkeleton } from "@/components/CatalogSkeleton";
 import { CloseIcon, SearchIcon } from "@/components/icons";
@@ -59,10 +60,10 @@ export function Catalog({ initial, heading = "Katalog", compactHero = false }: C
 
   return (
     <section id="katalog" className={compactHero ? "pt-8" : "pt-10"}>
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-2xl font-semibold tracking-tight">{heading}</h2>
+            <h2 className="text-3xl font-semibold tracking-[-.04em] sm:text-4xl">{heading}</h2>
             <p className="mt-1 text-sm text-muted">
               {catalog.ok
                 ? `${visible.length} dari ${products.length} produk`
@@ -71,7 +72,14 @@ export function Catalog({ initial, heading = "Katalog", compactHero = false }: C
           </div>
         </div>
 
-        <div className="mt-6 grid gap-3 md:grid-cols-[1.4fr_repeat(3,minmax(0,0.7fr))_auto]">
+        <div className="mt-7 flex flex-wrap gap-2" aria-label="Pilih kategori">
+          {["", ...categories].map((item) => {
+            const Icon = !item ? LayoutGrid : /iphone|phone/i.test(item) ? Smartphone : /mac|laptop/i.test(item) ? Laptop : /ipad|tablet/i.test(item) ? Tablet : Headphones;
+            return <button key={item} type="button" aria-pressed={category === item} onClick={() => setCategory(item)} className={`inline-flex min-h-12 items-center gap-2 rounded-full border px-5 text-sm font-medium transition-colors ${category === item ? "border-ink bg-ink text-white" : "border-line bg-white text-muted hover:border-ink hover:text-ink"}`}><Icon size={18} strokeWidth={1.5} />{item || "Semua produk"}</button>;
+          })}
+        </div>
+
+        <div className="mt-6 grid gap-3 rounded-2xl border border-line bg-white p-4 md:grid-cols-[1.4fr_repeat(3,minmax(0,0.7fr))_auto]">
           <label className="block">
             <span className="mb-1.5 block text-xs font-medium text-muted">Cari produk</span>
             <span className="relative block">
